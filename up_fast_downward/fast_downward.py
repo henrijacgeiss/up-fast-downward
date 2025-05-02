@@ -31,6 +31,7 @@ class FastDownwardMixin:
         fast_downward_anytime_search_config: Optional[str] = None,
         fast_downward_translate_options: Optional[List[str]] = None,
         fast_downward_search_time_limit: Optional[str] = None,
+        fast_downward_sas_file_name: Optional[str] = None,
         log_level: str = "info",
     ):
         self._fd_alias = fast_downward_alias
@@ -39,6 +40,7 @@ class FastDownwardMixin:
         self._fd_anytime_search_config = fast_downward_anytime_search_config
         self._fd_translate_options = fast_downward_translate_options
         self._fd_search_time_limit = fast_downward_search_time_limit
+        self._fd_sas_file_name = fast_downward_sas_file_name
         self._log_level = log_level
         assert not (self._fd_alias and self._fd_search_config)
         assert not (self._fd_anytime_alias and self._fd_anytime_search_config)
@@ -67,6 +69,8 @@ class FastDownwardMixin:
         cmd = self._base_cmd(plan_filename)
         if self._fd_alias:
             cmd += ["--alias", self._fd_alias]
+        if self._fd_sas_file_name:
+            cmd += ["--sas-file", self._fd_sas_file_name]
         cmd += [domain_filename, problem_filename]
         if self._fd_translate_options:
             cmd += ["--translate-options"] + self._fd_translate_options
@@ -80,6 +84,8 @@ class FastDownwardMixin:
         cmd = self._base_cmd(plan_filename)
         if self._fd_anytime_alias:
             cmd += ["--alias", self._fd_anytime_alias]
+        if self._fd_sas_file_name:
+            cmd += ["--sas-file", self._fd_sas_file_name]
         cmd += [domain_filename, problem_filename]
         if self._fd_translate_options:
             cmd += ["--translate-options"] + self._fd_translate_options
@@ -138,6 +144,7 @@ class FastDownwardPDDLPlanner(FastDownwardMixin, PDDLAnytimePlanner):
         fast_downward_anytime_search_config: Optional[str] = None,
         fast_downward_translate_options: Optional[List[str]] = None,
         fast_downward_search_time_limit: Optional[str] = None,
+        fast_downward_sas_file_name: Optional[str] = None,
         log_level: str = "info",
     ):
         PDDLAnytimePlanner.__init__(self)
@@ -157,6 +164,7 @@ class FastDownwardPDDLPlanner(FastDownwardMixin, PDDLAnytimePlanner):
             fast_downward_anytime_search_config=fast_downward_anytime_search_config,
             fast_downward_translate_options=fast_downward_translate_options,
             fast_downward_search_time_limit=fast_downward_search_time_limit,
+            fast_downward_sas_file_name=fast_downward_sas_file_name,
             log_level=log_level,
         )
 
@@ -225,10 +233,17 @@ class FastDownwardPDDLPlanner(FastDownwardMixin, PDDLAnytimePlanner):
 
 
 class FastDownwardOptimalPDDLPlanner(FastDownwardMixin, PDDLPlanner):
-    def __init__(self, log_level: str = "info"):
+    def __init__(
+        self,
+        fast_downward_sas_file_name: Optional[str] = None,
+        log_level: str = "info"
+    ):
         PDDLPlanner.__init__(self)
         FastDownwardMixin.__init__(
-            self, fast_downward_search_config="astar(lmcut())", log_level=log_level
+            self,
+            fast_downward_search_config="astar(lmcut())",
+            fast_downward_sas_file_name=fast_downward_sas_file_name,
+            log_level=log_level
         )
         self._guarantee_no_plan_found = ResultStatus.UNSOLVABLE_PROVEN
         self._guarantee_metrics_task = ResultStatus.SOLVED_OPTIMALLY
