@@ -76,7 +76,7 @@ class FastDownwardMixin:
             cmd += ["--translate-options"] + self._fd_translate_options
         if self._fd_search_config:
             cmd += ["--search-options", "--search"] + self._fd_search_config
-        print(cmd)
+        #print(cmd)
         return cmd
 
     def _get_anytime_cmd(
