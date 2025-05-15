@@ -75,7 +75,8 @@ class FastDownwardMixin:
         if self._fd_translate_options:
             cmd += ["--translate-options"] + self._fd_translate_options
         if self._fd_search_config:
-            cmd += ["--search-options", "--search"] + self._fd_search_config.split()
+            cmd += ["--search-options", "--search"] + self._fd_search_config
+        print(cmd)
         return cmd
 
     def _get_anytime_cmd(
@@ -236,12 +237,13 @@ class FastDownwardOptimalPDDLPlanner(FastDownwardMixin, PDDLPlanner):
     def __init__(
         self,
         fast_downward_sas_file_name: Optional[str] = None,
+        fast_downward_search_config: Optional[str] = None,
         log_level: str = "info"
     ):
         PDDLPlanner.__init__(self)
         FastDownwardMixin.__init__(
             self,
-            fast_downward_search_config="astar(lmcut())",
+            fast_downward_search_config=fast_downward_search_config,
             fast_downward_sas_file_name=fast_downward_sas_file_name,
             log_level=log_level
         )
